@@ -1,0 +1,16 @@
+---
+- hosts: all
+  tasks:
+    - name: Install apt-get
+      apt:
+        name: apt
+        state: present
+
+    - name: Update package repositories
+      apt:
+        update_cache: yes
+
+    - name: Install pip3
+      apt:
+        name: pip3
+        state: present

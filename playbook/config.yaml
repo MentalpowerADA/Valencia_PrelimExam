@@ -1,0 +1,7 @@
+---
+python_version: 3
+pip_version: 3
+java_package: openjdk-11-jdk
+motd_text: "Welcome to our managed server!"
+new_user: mynewuser
+

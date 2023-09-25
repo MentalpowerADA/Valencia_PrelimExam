@@ -1,0 +1,53 @@
+---
+- name: Manage Remote Servers
+  hosts: all
+  become: yes
+  vars_files:
+    - config.yaml
+
+  tasks:
+    - name: Install Python3 and pip3 on Ubuntu
+      apt:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - python3
+        - python3-pip
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Install Python3 and pip3 on CentOS
+      ansible.builtin.command: dnf install -y python3 python3-pip
+      when: ansible_distribution == 'CentOS'
+
+    - name: Ensure Python 3 symlink exists on Ubuntu
+      file:
+        src: /usr/bin/python3
+        dest: /usr/bin/python
+        state: link
+      become: yes
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Set pip3 as default pip on Ubuntu
+      command: update-alternatives --install /usr/bin/pip pip /usr/bin/pip3 1
+      when: ansible_distribution == 'Ubuntu'
+
+    - name: Install Java open-jdk
+      ansible.builtin.package:
+        name: "{{ java_package }}"
+        state: present
+
+    - name: Ensure the /etc/motd file contains the desired text
+      copy:
+        content: "{{ motd_text }}"
+        dest: /etc/motd
+        owner: root
+        group: root
+        mode: '0644'
+      become: yes
+      ignore_errors: yes
+
+    - name: Create a new user
+      ansible.builtin.user:
+        name: "{{ new_user }}"
+        state: present
+
